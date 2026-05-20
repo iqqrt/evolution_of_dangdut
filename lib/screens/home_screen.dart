@@ -7,7 +7,7 @@ import 'level_screen.dart';
 import 'music_gallery_screen.dart';
 import 'profile_screen.dart';
 import 'figure_list_screen.dart';
-import 'ai_chat_screen.dart'; // <--- IMPORT LAYAR AI LU DI SINI
+import 'ai_chat_screen.dart'; 
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -103,25 +103,35 @@ class _HomeScreenState extends State<HomeScreen> {
         physics: const BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
-            expandedHeight: 150.0,
+            expandedHeight: 160.0, // FIX: Dinaikkan ke 160 biar gak luber ke bawah
             backgroundColor: kDarkBG,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              titlePadding: const EdgeInsets.fromLTRB(20, 0, 20, 16), // FIX: Diatur ulang agar posisi vertikalnya presisi
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("HALO, ${userName.toUpperCase()}!", 
-                        style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: kAmber)),
-                      const Text("Interactive Music Evolution Learning", 
-                        style: TextStyle(fontSize: 8, color: Colors.white54)),
-                    ],
+                  // FIX: Dibungkus Flexible agar teks panjang otomatis mengalah dan tidak meluber
+                  Flexible(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "HALO, ${userName.toUpperCase()}!", 
+                          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: kAmber),
+                          overflow: TextOverflow.ellipsis, // Pengaman kalau nama kepanjangan
+                        ),
+                        const Text(
+                          "Interactive Music Evolution Learning", 
+                          style: TextStyle(fontSize: 8, color: Colors.white54),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: 10), // Jarak aman antara teks dan avatar
                   GestureDetector(
                     onTap: () async {
                       await Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
@@ -292,10 +302,12 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const Icon(Icons.history, color: Colors.white24, size: 18),
           const SizedBox(width: 15),
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(activity, style: const TextStyle(color: Colors.white70, fontSize: 12)),
-            Text(time, style: const TextStyle(color: Colors.white24, fontSize: 10)),
-          ]),
+          Expanded( // Mencegah teks history kepanjangan meluber ke samping
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(activity, style: const TextStyle(color: Colors.white70, fontSize: 12), overflow: TextOverflow.ellipsis),
+              Text(time, style: const TextStyle(color: Colors.white24, fontSize: 10)),
+            ]),
+          ),
         ],
       ),
     );
